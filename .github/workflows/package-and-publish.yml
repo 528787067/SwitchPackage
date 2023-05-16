@@ -1,0 +1,33 @@
+name: package and publish
+
+on:
+  workflow_dispatch:
+
+jobs:
+  work:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: check
+        uses: actions/checkout@master
+
+      - name: package
+        run: sh ./script.sh
+
+      - name: env
+        run: |
+          cd 'works/downloads'
+          echo TAG=$(date '+v%Y%m%d-%H%M%S') >> $GITHUB_ENV
+          echo BODY=$(echo -e "`ls hekate_ctcaer_*.zip`<br/>`ls atmosphere-*.zip`") >> $GITHUB_ENV
+          echo PRERELEASE=$(if [[ `ls atmosphere-*.zip` =~ 'prerelease' ]]; then echo true; else echo false; fi ) >> GITHUB_ENV
+
+      - name: publish
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: false
+          name: ${{ env.TAG }}
+          body: ${{ env.BODY }}
+          tag_name: ${{ env.TAG }}
+          prerelease: ${{ env.PRERELEASE }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: works/releases/*
