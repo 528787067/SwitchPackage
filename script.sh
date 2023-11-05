@@ -20,7 +20,7 @@ curl -sL 'https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases' \
     | xargs -n2 sh -c 'curl -L $1 -o downloads/$0'
 find 'downloads' -name 'atmosphere-*.zip' | xargs -I {} unzip -q -u -o -d 'packages' {}
 
-curl -L 'https://jits.cc/patches' -o 'downloads/sigpatches.zip'
+curl -L 'https://sigmapatches.coomer.party/sigpatches.zip' -o 'downloads/sigpatches.zip'
 unzip -q -u -o -d 'packages' 'downloads/sigpatches.zip'
 
 cd 'packages' && zip -q -r '../releases/hekate_atmosphere_sigpatches.zip' . && cd ..
