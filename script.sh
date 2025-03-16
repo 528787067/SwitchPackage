@@ -1,4 +1,12 @@
-#!/bin/sh
+#!/bin/bash
+
+GITHUB_PROXY="$1"
+if [ -z "$GITHUB_PROXY" ]; then
+    GITHUB_PROXY="https://ghproxy.net/"
+elif [[ "$GITHUB_PROXY" != */ ]]; then
+    GITHUB_PROXY+="/"
+fi
+export GITHUB_PROXY
 
 set -e
 set -v on
@@ -10,8 +18,6 @@ mkdir -p downloads
 mkdir -p packages
 mkdir -p releases
 
-export GITHUB_PROXY=https://github.moeyy.xyz/
-
 curl -sL 'https://api.github.com/repos/CTCaer/hekate/releases/latest' \
     | jq -r '.assets[] | select(.name | test("hekate_ctcaer_[.\\d]+_Nyx_[.\\d]+(_v\\d+)?.zip")) | .name, .browser_download_url' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
@@ -22,10 +28,12 @@ curl -sL 'https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
 find 'downloads' -name 'atmosphere-*.zip' | xargs -I {} unzip -q -u -o -d 'packages' {}
 
-curl -L 'https://sigmapatches.coomer.party/sigpatches.zip' -o 'downloads/sigpatches.zip'
-unzip -q -u -o -d 'packages' 'downloads/sigpatches.zip'
+curl -sL 'https://api.github.com/repos/borntohonk/sys-patch/releases' \
+    | jq -r '.[0].assets[] | select(.name == "sys-patch.zip") | .name, .browser_download_url' \
+    | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
+unzip -q -u -o -d 'packages' 'downloads/sys-patch.zip'
 
-cd 'packages' && zip -q -r '../releases/hekate_atmosphere_sigpatches.zip' . && cd ..
+cd 'packages' && zip -q -r '../releases/hekate_atmosphere_syspatch.zip' . && cd ..
 
 mv -f packages/hekate_ctcaer_*.bin 'packages/payload.bin'
 
@@ -41,10 +49,11 @@ curl -sL 'https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
 cp -f 'downloads/fusee.bin' 'packages/bootloader/payloads/fusee.bin'
 
-cd 'packages' && zip -q -r '../releases/hekate_atmosphere_sigpatches_configs.zip' . && cd ..
+cd 'packages' && zip -q -r '../releases/hekate_atmosphere_syspatch_configs.zip' . && cd ..
 
 rm -f 'packages/switch/haze.nro'
 rm -f 'packages/switch/reboot_to_payload.nro'
+rm -r -f 'packages/switch/.overlays'
 mkdir -p 'packages/switch/daybreak' && mv -f 'packages/switch/daybreak.nro' 'packages/switch/daybreak/daybreak.nro'
 
 curl -sL 'https://api.github.com/repos/rashevskyv/dbi/releases/latest' \
@@ -73,4 +82,4 @@ curl -sL 'https://api.github.com/repos/WerWolv/Hekate-Toolbox/releases/latest' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
 mkdir -p 'packages/switch/HekateToolbox' && cp -f 'downloads/HekateToolbox.nro' 'packages/switch/HekateToolbox/HekateToolbox.nro'
 
-cd 'packages' && zip -q -r '../releases/hekate_atmosphere_sigpatches_configs_tools.zip' . && cd ../..
+cd 'packages' && zip -q -r '../releases/hekate_atmosphere_syspatch_configs_tools.zip' . && cd ../..
