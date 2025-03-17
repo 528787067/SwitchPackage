@@ -2,6 +2,11 @@ name: package and publish
 
 on:
   workflow_dispatch:
+    inputs:
+      proxy:
+        default: ""
+        description: "proxy"
+        required: false
 
 jobs:
   work:
@@ -12,7 +17,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: package
-        run: sh ./script.sh
+        run: sh ./script.sh ${{ github.event.inputs.proxy }}
 
       - name: env
         run: |
