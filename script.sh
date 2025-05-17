@@ -48,10 +48,10 @@ rm -f 'packages/switch/reboot_to_payload.nro'
 rm -r -f 'packages/switch/.overlays'
 mkdir -p 'packages/switch/daybreak' && mv -f 'packages/switch/daybreak.nro' 'packages/switch/daybreak/daybreak.nro'
 
-curl -sL 'https://api.github.com/repos/rashevskyv/dbi/releases/latest' \
+curl -sL 'https://api.github.com/repos/rashevskyv/dbi/releases/135856657' \
     | jq -r '.assets[] | select(.name == "DBI.nro") | .name, .browser_download_url' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
-curl -sL 'https://api.github.com/repos/rashevskyv/dbi/releases/latest' \
+curl -sL 'https://api.github.com/repos/rashevskyv/dbi/releases/135856657' \
     | jq -r '.assets[] | select(.name == "dbi.config") | .name, .browser_download_url' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
 mkdir -p 'packages/switch/DBI'
