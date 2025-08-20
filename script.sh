@@ -26,7 +26,7 @@ curl -sL 'https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
 find 'downloads' -name 'atmosphere-*.zip' | xargs -I {} unzip -q -u -o -d 'packages' {}
 
-curl -sL 'https://api.github.com/repos/borntohonk/sys-patch/releases' \
+curl -sL 'https://api.github.com/repos/impeeza/sys-patch/releases' \
     | jq -r '.[0].assets[] | select(.name == "sys-patch.zip") | .name, .browser_download_url' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
 unzip -q -u -o -d 'packages' 'downloads/sys-patch.zip'
