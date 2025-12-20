@@ -27,9 +27,9 @@ curl -sL 'https://api.github.com/repos/Atmosphere-NX/Atmosphere/releases' \
 find 'downloads' -name 'atmosphere-*.zip' | xargs -I {} unzip -q -u -o -d 'packages' {}
 
 curl -sL 'https://api.github.com/repos/impeeza/sys-patch/releases' \
-    | jq -r '.[0].assets[] | select(.name == "sys-patch.zip") | .name, .browser_download_url' \
+    | jq -r '.[0].assets[] | select(.name | test("sys-patch(-.*)?.zip")) | .name, .browser_download_url' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
-unzip -q -u -o -d 'packages' 'downloads/sys-patch.zip'
+find 'downloads' -name 'sys-patch*.zip' | xargs -I {} unzip -q -u -o -d 'packages' {}
 
 cd 'packages' && zip -q -r '../releases/hekate_atmosphere_syspatch.zip' . && cd ..
 
@@ -64,10 +64,10 @@ curl -sL 'https://api.github.com/repos/joel16/NX-Shell/releases/latest' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
 mkdir -p 'packages/switch/NX-Shell' && cp -f 'downloads/NX-Shell.nro' 'packages/switch/NX-Shell/NX-Shell.nro'
 
-curl -sL 'https://api.github.com/repos/zdm65477730/Switch-Firmware-Dumper/releases/latest' \
+curl -sL 'https://api.github.com/repos/mrdude2478/Switch-Firmware-Dumper/releases/latest' \
     | jq -r '.assets[] | select(.name == "Firmware-Dumper.zip") | .name, .browser_download_url' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
-unzip -q -u -o -d 'packages' 'downloads/Firmware-Dumper.zip'
+mkdir -p 'packages/switch/Firmware-Dumper' && unzip -q -u -o -d 'packages/switch/Firmware-Dumper' 'downloads/Firmware-Dumper.zip'
 
 curl -sL 'https://api.github.com/repos/WerWolv/Hekate-Toolbox/releases/latest' \
     | jq -r '.assets[] | select(.name == "HekateToolbox.nro") | .name, .browser_download_url' \
