@@ -48,26 +48,32 @@ rm -f 'packages/switch/reboot_to_payload.nro'
 rm -r -f 'packages/switch/.overlays'
 mkdir -p 'packages/switch/daybreak' && mv -f 'packages/switch/daybreak.nro' 'packages/switch/daybreak/daybreak.nro'
 
-curl -sL 'https://api.github.com/repos/rashevskyv/dbi/releases/135856657' \
-    | jq -r '.assets[] | select(.name == "DBI.nro") | .name, .browser_download_url' \
+curl -sL 'https://api.github.com/repos/suchmememanyskill/TegraExplorer/releases/latest' \
+    | jq -r '.assets[] | select(.name == "TegraExplorer.bin") | .name, .browser_download_url' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
-curl -sL 'https://api.github.com/repos/rashevskyv/dbi/releases/135856657' \
+cp -f 'downloads/TegraExplorer.bin' 'packages/bootloader/payloads/TegraExplorer.bin'
+
+curl -sL 'https://api.github.com/repos/impeeza/Lockpick_RCMDecScots/releases/latest' \
+    | jq -r '.assets[] | select(.name == "Lockpick_RCM.zip") | .name, .browser_download_url' \
+    | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
+unzip -q -u -o -d 'packages/bootloader/payloads' 'downloads/Lockpick_RCM.zip'
+
+curl -sL 'https://api.github.com/repos/rashevskyv/DBIPatcher/releases/latest' \
+    | jq -r '.assets[] | select(.name | test("DBI.\\d+.en.nro")) | .name, .browser_download_url' \
+    | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
+mkdir -p 'packages/switch/DBI' && find 'downloads' -name 'DBI.*.nro' | xargs -I {} cp -f {} 'packages/switch/DBI/DBI.nro'
+
+curl -sL 'https://api.github.com/repos/rashevskyv/dbi/releases' \
+    | jq ".[] | select(.tag_name | test(\"$(curl -sL 'https://api.github.com/repos/rashevskyv/DBIPatcher/releases/latest' | jq -r '.tag_name')(ru)?\"))"    \
     | jq -r '.assets[] | select(.name == "dbi.config") | .name, .browser_download_url' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
-mkdir -p 'packages/switch/DBI'
-cp -f 'downloads/DBI.nro' 'packages/switch/DBI/DBI.nro'
 cp -f 'downloads/dbi.config' 'packages/switch/DBI/dbi.config'
 sed -i 's/ExitToHomeScreen=true/ExitToHomeScreen=false/' 'packages/switch/DBI/dbi.config'
 
-curl -sL 'https://api.github.com/repos/joel16/NX-Shell/releases/latest' \
+curl -sL 'https://api.github.com/repos/zdm65477730/NX-Shell/releases/latest' \
     | jq -r '.assets[] | select(.name == "NX-Shell.nro") | .name, .browser_download_url' \
     | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
 mkdir -p 'packages/switch/NX-Shell' && cp -f 'downloads/NX-Shell.nro' 'packages/switch/NX-Shell/NX-Shell.nro'
-
-curl -sL 'https://api.github.com/repos/mrdude2478/Switch-Firmware-Dumper/releases/latest' \
-    | jq -r '.assets[] | select(.name == "Firmware-Dumper.zip") | .name, .browser_download_url' \
-    | xargs -n2 sh -c 'curl -L $GITHUB_PROXY$1 -o downloads/$0'
-mkdir -p 'packages/switch/Firmware-Dumper' && unzip -q -u -o -d 'packages/switch/Firmware-Dumper' 'downloads/Firmware-Dumper.zip'
 
 curl -sL 'https://api.github.com/repos/WerWolv/Hekate-Toolbox/releases/latest' \
     | jq -r '.assets[] | select(.name == "HekateToolbox.nro") | .name, .browser_download_url' \
