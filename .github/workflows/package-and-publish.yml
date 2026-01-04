@@ -21,7 +21,7 @@ jobs:
 
       - name: env
         run: |
-          cd 'works/downloads'
+          cd 'workspace/downloads'
           echo TAG=$(date '+v%Y%m%d-%H%M%S') >> $GITHUB_ENV
           echo BODY=$(echo -e "`ls hekate_ctcaer_*.zip`<br/>`ls atmosphere-*.zip`<br/>`ls DBI.*.nro`") >> $GITHUB_ENV
           echo PRERELEASE=$(if [[ `ls atmosphere-*.zip` =~ 'prerelease' ]]; then echo true; else echo false; fi ) >> GITHUB_ENV
@@ -35,4 +35,4 @@ jobs:
           tag_name: ${{ env.TAG }}
           prerelease: ${{ env.PRERELEASE }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: works/releases/*
+          files: workspace/releases/*
