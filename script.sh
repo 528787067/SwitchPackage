@@ -53,12 +53,17 @@ cp -f 'downloads/TegraExplorer.bin' 'packages/bootloader/payloads/TegraExplorer.
 curl -sL 'https://api.github.com/repos/impeeza/Lockpick_RCMDecScots/releases/latest' \
     | jq -r '.assets[] | select(.name | test("Lockpick_RCM(-.*)?.zip")) | .name, .browser_download_url' \
     | xargs -n2 sh -c 'curl -L '"$GITHUB_PROXY"'$1 -o downloads/$0'
-find 'downloads' -name 'Lockpick_RCM*.zip' -type f | xargs -I {} unzip -quod 'packages/bootloader/payloads' {}
+find 'downloads' -name 'Lockpick_RCM*.zip' -type f | xargs -I {} unzip -quod 'packages/bootloader/payloads' {} 'Lockpick_RCM.bin'
 
 curl -sL 'https://api.github.com/repos/rashevskyv/DBIPatcher/releases/latest' \
-    | jq -r '.assets[] | select(.name | test("DBI.\\d+.en.nro")) | .name, .browser_download_url' \
+    | jq -r '.assets[] | select(.name | test("DBI(.\\d+.en)?.nro")) | .name, .browser_download_url' \
     | xargs -n2 sh -c 'curl -L '"$GITHUB_PROXY"'$1 -o downloads/$0'
-mkdir -p 'packages/switch/DBI' && cp -f downloads/DBI.*.nro 'packages/switch/DBI/DBI.nro'
+mkdir -p 'packages/switch/DBI' && cp -f downloads/DBI*.nro 'packages/switch/DBI/DBI.nro'
+
+curl -sL 'https://api.github.com/repos/rashevskyv/DBIPatcher/releases/latest' \
+    | jq -r '.assets[] | select(.name == "translation_en.bin") | .name, .browser_download_url' \
+    | xargs -n2 sh -c 'curl -L '"$GITHUB_PROXY"'$1 -o downloads/$0'
+cp -f downloads/translation_en.bin 'packages/switch/DBI/translation.bin'
 
 curl -sL 'https://api.github.com/repos/rashevskyv/dbi/releases' \
     | jq ".[] | select(.tag_name | test(\"$(curl -sL 'https://api.github.com/repos/rashevskyv/DBIPatcher/releases/latest' | jq -r '.tag_name')(ru)?\"))" \
