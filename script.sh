@@ -72,6 +72,7 @@ curl -sL 'https://api.github.com/repos/rashevskyv/dbi/releases' \
     | xargs -n2 sh -c 'curl -L '"$GITHUB_PROXY"'$1 -o downloads/$0'
 cp -f 'downloads/dbi.config' 'packages/switch/DBI/dbi.config'
 sed -i 's/ExitToHomeScreen=true/ExitToHomeScreen=false/' 'packages/switch/DBI/dbi.config'
+sed -i 's|SavesFolder=sdmc:/DBIsaves/|SavesFolder=sdmc:/switch/DBI/DBIsaves/|' 'packages/switch/DBI/dbi.config'
 
 curl -sL 'https://api.github.com/repos/zdm65477730/NX-Shell/releases/latest' \
     | jq -r '.assets[] | select(.name == "NX-Shell.nro") | .name, .browser_download_url' \
