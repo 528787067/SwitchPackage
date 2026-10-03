@@ -51,7 +51,7 @@ curl -sL 'https://api.github.com/repos/suchmememanyskill/TegraExplorer/releases/
 cp -f 'downloads/TegraExplorer.bin' 'packages/bootloader/payloads/TegraExplorer.bin'
 
 curl -sL 'https://api.github.com/repos/impeeza/Lockpick_RCMDecScots/releases/latest' \
-    | jq -r '.assets[] | select(.name | test("Lockpick_RCM(-.*)?.zip")) | .name, .browser_download_url' \
+    | jq -r '.assets[] | select(.name | test("Lockpick_RCM(-[.\\d]+)?.zip")) | .name, .browser_download_url' \
     | xargs -n2 sh -c 'curl -L '"$GITHUB_PROXY"'$1 -o downloads/$0'
 find 'downloads' -name 'Lockpick_RCM*.zip' -type f | xargs -I {} unzip -quod 'packages/bootloader/payloads' {} 'Lockpick_RCM.bin'
 
