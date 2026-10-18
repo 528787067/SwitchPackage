@@ -84,5 +84,11 @@ curl -sL 'https://api.github.com/repos/WerWolv/Hekate-Toolbox/releases/latest' \
     | xargs -n2 sh -c 'curl -L '"$GITHUB_PROXY"'$1 -o downloads/$0'
 mkdir -p 'packages/switch/HekateToolbox' && cp -f 'downloads/HekateToolbox.nro' 'packages/switch/HekateToolbox/HekateToolbox.nro'
 
+curl -sL 'https://api.github.com/repos/retronx-team/sys-clk/releases/latest' \
+    | jq -r '.assets[] | select(.name | test("sys-clk-.*.zip")) | .name, .browser_download_url' \
+    | xargs -n2 sh -c 'curl -L '"$GITHUB_PROXY"'$1 -o downloads/$0'
+find 'downloads' -name 'sys-clk-*.zip' -type f | xargs -I {} unzip -quod 'packages' {} -x 'README.md' 'switch/.overlays/*'
+mkdir -p 'packages/switch/sys-clk-manager' && mv 'packages/switch/sys-clk-manager.nro' 'packages/switch/sys-clk-manager/sys-clk-manager.nro'
+
 cd 'packages' && zip -qr "$WORKSPACE/releases/hekate_atmosphere_syspatch_configs_tools.zip" . && cd -
 cd 'downloads' && zip -qr "$WORKSPACE/releases/downloads.zip" . && cd "$ROOT_PATH"
